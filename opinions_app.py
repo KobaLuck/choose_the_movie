@@ -37,7 +37,7 @@ def add_opinion_view():
 
 @app.route('/opinions/<int:id>')
 def opinion_view(id):
-    opinion = Opinion.query.get(id)
+    opinion = Opinion.query.get_or_404(id)
     return render_template('opinion.html', opinion=opinion)
 
 
