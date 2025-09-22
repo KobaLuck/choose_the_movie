@@ -56,9 +56,14 @@ def add_opinion_view():
     form = OpinionForm()
 
     if form.validate_on_submit():
+        text = form.text.data
+        if Opinion.query.filter_by(text=text).first() is not None:
+            flash('Такое мнение уже было оставлено ранее!')
+            return render_template('add_opinion.html', form=form)
+
         opinion = Opinion(
             title=form.title.data,
-            text=form.text.data,
+            text=text,
             source=form.source.data
         )
         db.session.add(opinion)
