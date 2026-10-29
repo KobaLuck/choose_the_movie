@@ -17,6 +17,8 @@ async def async_upload_files_to_dropbox(images):
         tasks = []
         async with aiohttp.ClientSession() as session:
             for image in images:
+                if not image or not image.filename:
+                    continue
                 tasks.append(
                     asyncio.ensure_future(
                         upload_file_and_get_url(session, image)

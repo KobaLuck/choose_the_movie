@@ -1,42 +1,31 @@
-### Как запустить проект:
+# Choose the Movie
 
-Клонировать репозиторий и перейти в него в командной строке:
+Веб-приложение для мнений о фильмах: случайный выбор, добавление отзывов, REST API и изображения из Dropbox.
 
-```
-git clone 
-```
+**Python · Flask · SQLAlchemy · aiohttp**
 
-```
-cd what_to_watch
-```
+## Быстрый старт
 
-Cоздать и активировать виртуальное окружение:
-
-```
-python3 -m venv venv
-```
-
-```
-source venv/bin/activate
-```
-или для пользователей Windows
-
-```
-source env/Scripts/activate
+```bash
+git clone https://github.com/KobaLuck/choose_the_movie.git
+cd choose_the_movie
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+flask --app opinions_app shell
+# В открывшейся оболочке: from opinions_app import db; db.create_all()
+# Затем exit()
+flask --app opinions_app run
 ```
 
-Установить зависимости из файла requirements.txt:
+В Windows PowerShell окружение активируется командой `.venv\Scripts\Activate.ps1`.
 
-```
-python3 -m pip install --upgrade pip
-```
+Создайте `.env`: `DATABASE_URI=sqlite:///opinions.db`, `SECRET_KEY` — ваш случайный ключ. `DROPBOX_TOKEN` нужен только для загрузки изображений. API: `/api/opinions/` и `/api/get-random-opinion/`.
 
-```
-pip install -r requirements.txt
-```
+## Структура
 
-Запустить проект:
+- `settings.py` — исходный код.
 
-```
-flask run
-```
+---
+
+[Никита Казанцев](https://github.com/KobaLuck) · [Все публичные проекты](https://github.com/KobaLuck?tab=repositories)

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="container py-5">
+  <h1>Пока нет мнений о фильмах</h1>
+  <p>Добавьте первый фильм и поделитесь впечатлениями.</p>
+  <a class="btn btn-primary" href="{{ url_for('add_opinion_view') }}">Добавить мнение</a>
+</section>
+{% endblock %}

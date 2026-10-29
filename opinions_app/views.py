@@ -20,7 +20,7 @@ def random_opinion():
 def index_view():
     opinion = random_opinion()
     if opinion is None:
-        abort(500)
+        return render_template('empty.html')
     return render_template('opinion.html', opinion=opinion)
 
 

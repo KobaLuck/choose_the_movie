@@ -16,10 +16,13 @@ def get_opinion(id):
 
 @app.route('/api/opinions/<int:id>/', methods=['PATCH'])
 def update_opinion(id):
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        raise InvalidAPIUsage('Тело запроса должно быть объектом JSON')
+    validate_opinion(data, partial=True)
     if (
         'text' in data and 
-        Opinion.query.filter_by(text=data['text']).first() is not None
+        Opinion.query.filter(Opinion.text == data['text'], Opinion.id != id).first() is not None
     ):
         raise InvalidAPIUsage('Такое мнение уже есть в базе данных')
     opinion = Opinion.query.get(id)
@@ -52,9 +55,10 @@ def get_opinions():
 
 @app.route('/api/opinions/', methods=['POST'])
 def add_opinion():
-    data = request.get_json()
-    if 'title' not in data or 'text' not in data:
-        raise InvalidAPIUsage('В запросе отсутствуют обязательные поля')
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        raise InvalidAPIUsage('Тело запроса должно быть объектом JSON')
+    validate_opinion(data)
     if Opinion.query.filter_by(text=data['text']).first() is not None:
         raise InvalidAPIUsage('Такое мнение уже есть в базе данных')
     opinion = Opinion()
@@ -70,3 +74,15 @@ def get_random_opinion():
     if opinion is not None:
         return jsonify({'opinion': opinion.to_dict()}), 200
     raise InvalidAPIUsage('В базе данных нет мнений', 404)
+
+
+def validate_opinion(data, partial=False):
+    for field in ('title', 'text'):
+        if field not in data and partial:
+            continue
+        if not isinstance(data.get(field), str) or not data[field].strip():
+            raise InvalidAPIUsage('В запросе отсутствуют обязательные поля')
+    for field, maximum in (('title', 128), ('source', 256), ('added_by', 64)):
+        if field in data and data[field] is not None:
+            if not isinstance(data[field], str) or len(data[field]) > maximum:
+                raise InvalidAPIUsage('Некорректное значение поля ' + field)
